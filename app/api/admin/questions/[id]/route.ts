@@ -1,7 +1,5 @@
 import { getQuestionById, updateQuestion, deleteQuestion } from "@/lib/admin"
 import { NextResponse } from "next/server"
-import type { Category, Difficulty } from "@prisma/client"
-
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const question = await getQuestionById(params.id)
@@ -20,10 +18,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { text, explanation, category, difficulty, examTag, isActive, answers } = body
+    const { text, explanation examTag, isActive, answers } = body
 
     // Validation
-    if (!text || !category || !difficulty || !answers || answers.length < 2) {
+    if (!text || !answers || answers.length < 2) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
@@ -37,8 +35,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const question = await updateQuestion(params.id, {
       text,
       explanation: explanation || undefined,
-      category: category as Category,
-      difficulty: difficulty as Difficulty,
       examTag: examTag || undefined,
       isActive: isActive ?? true,
       answers: validAnswers,
