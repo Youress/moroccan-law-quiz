@@ -1,58 +1,45 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Input,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Save, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import type { Category, Difficulty } from "@prisma/client";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Badge } from "@/components/ui/badge"
+import { Plus, Trash2, Save, ArrowLeft } from "lucide-react"
+import Link from "next/link"
+import type { Category, Difficulty } from "@prisma/client"
 
 interface Answer {
-  id?: string;
-  text: string;
-  isCorrect: boolean;
+  id?: string
+  text: string
+  isCorrect: boolean
 }
 
 interface Question {
-  id: string;
-  text: string;
-  explanation?: string;
-  category: Category;
-  difficulty: Difficulty;
-  examTag?: string;
-  isActive: boolean;
-  answers: Answer[];
+  id: string
+  text: string
+  explanation?: string
+  category: Category
+  difficulty: Difficulty
+  examTag?: string
+  isActive: boolean
+  answers: Answer[]
 }
 
 interface QuestionFormProps {
-  question?: Question;
+  question?: Question
 }
 
 export default function QuestionForm({ question }: QuestionFormProps) {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     text: question?.text || "",
@@ -61,7 +48,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
     difficulty: question?.difficulty || ("" as Difficulty),
     examTag: question?.examTag || "",
     isActive: question?.isActive ?? true,
-  });
+  })
 
   const [answers, setAnswers] = useState<Answer[]>(
     question?.answers || [
@@ -69,8 +56,8 @@ export default function QuestionForm({ question }: QuestionFormProps) {
       { text: "", isCorrect: false },
       { text: "", isCorrect: false },
       { text: "", isCorrect: false },
-    ]
-  );
+    ],
+  )
 
   const categories = [
     { value: "GENERAL", label: "عام" },
@@ -82,72 +69,67 @@ export default function QuestionForm({ question }: QuestionFormProps) {
     { value: "LABOR", label: "شغل" },
     { value: "CONSTITUTIONAL", label: "دستوري" },
     { value: "PROCEDURE", label: "مسطرة" },
-  ];
+  ]
 
   const difficulties = [
     { value: "EASY", label: "سهل", color: "bg-green-100 text-green-800" },
     { value: "MEDIUM", label: "متوسط", color: "bg-yellow-100 text-yellow-800" },
     { value: "HARD", label: "صعب", color: "bg-red-100 text-red-800" },
-  ];
+  ]
 
-  const handleAnswerChange = (
-    index: number,
-    field: keyof Answer,
-    value: string | boolean
-  ) => {
-    const newAnswers = [...answers];
-    newAnswers[index] = { ...newAnswers[index], [field]: value };
-    setAnswers(newAnswers);
-  };
+
+  const handleAnswerChange = (index: number, field: keyof Answer, value: string | boolean) => {
+    const newAnswers = [...answers]
+    newAnswers[index] = { ...newAnswers[index], [field]: value }
+    setAnswers(newAnswers)
+  }
 
   const addAnswer = () => {
-    setAnswers([...answers, { text: "", isCorrect: false }]);
-  };
+    setAnswers([...answers, { text: "", isCorrect: false }])
+  }
 
   const removeAnswer = (index: number) => {
     if (answers.length > 2) {
-      setAnswers(answers.filter((_, i) => i !== index));
+      setAnswers(answers.filter((_, i) => i !== index))
     }
-  };
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+    e.preventDefault()
+    setIsLoading(true)
 
     try {
       // Validation
       if (!formData.text.trim()) {
-        alert("يرجى إدخال نص السؤال");
-        return;
+        alert("يرجى إدخال نص السؤال")
+        return
       }
 
       if (!formData.category) {
-        alert("يرجى اختيار التصنيف");
-        return;
+        alert("يرجى اختيار التصنيف")
+        return
       }
 
       if (!formData.difficulty) {
-        alert("يرجى اختيار مستوى الصعوبة");
-        return;
+        alert("يرجى اختيار مستوى الصعوبة")
+        return
       }
 
-      const validAnswers = answers.filter((a) => a.text.trim());
+      const validAnswers = answers.filter((a) => a.text.trim())
       if (validAnswers.length < 2) {
-        alert("يجب إدخال خيارين على الأقل");
-        return;
+        alert("يجب إدخال خيارين على الأقل")
+        return
       }
 
-      const correctAnswers = validAnswers.filter((a) => a.isCorrect);
+      const correctAnswers = validAnswers.filter((a) => a.isCorrect)
       if (correctAnswers.length === 0) {
-        alert("يجب تحديد إجابة صحيحة واحدة على الأقل");
-        return;
+        alert("يجب تحديد إجابة صحيحة واحدة على الأقل")
+        return
       }
 
-      const url = question
-        ? `/api/admin/questions/${question.id}`
-        : "/api/admin/questions";
+      const url = question ? `/api/admin/questions/${question.id}` : "/api/admin/questions"
 
-      const method = question ? "PUT" : "POST";
+      const method = question ? "PUT" : "POST"
 
       const response = await fetch(url, {
         method,
@@ -158,22 +140,22 @@ export default function QuestionForm({ question }: QuestionFormProps) {
           ...formData,
           answers: validAnswers,
         }),
-      });
+      })
 
       if (response.ok) {
-        const result = await response.json();
-        router.push(`/admin/questions/${result.question.id}`);
+        const result = await response.json()
+        router.push(`/admin/questions/${result.question.id}`)
       } else {
-        const error = await response.json();
-        alert(error.error || "حدث خطأ في الحفظ");
+        const error = await response.json()
+        alert(error.error || "حدث خطأ في الحفظ")
       }
     } catch (error) {
-      console.error("Submit error:", error);
-      alert("حدث خطأ في الحفظ");
+      console.error("Submit error:", error)
+      alert("حدث خطأ في الحفظ")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -189,9 +171,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
             <Textarea
               id="text"
               value={formData.text}
-              onChange={(e) =>
-                setFormData({ ...formData, text: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, text: e.target.value })}
               placeholder="أدخل نص السؤال هنا..."
               rows={4}
               required
@@ -203,9 +183,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
               <Label htmlFor="category">التصنيف *</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, category: value as Category })
-                }
+                onValueChange={(value) => setFormData({ ...formData, category: value as Category })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="اختر التصنيف" />
@@ -224,9 +202,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
               <Label htmlFor="difficulty">مستوى الصعوبة *</Label>
               <Select
                 value={formData.difficulty}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, difficulty: value as Difficulty })
-                }
+                onValueChange={(value) => setFormData({ ...formData, difficulty: value as Difficulty })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="اختر مستوى الصعوبة" />
@@ -250,12 +226,12 @@ export default function QuestionForm({ question }: QuestionFormProps) {
               onValueChange={(value) =>
                 setFormData({ ...formData, examTag: value })
               }
-            >
+            />
 
             <Input
               id="examTag"
               value={formData.examTag}
-              onChange={(e) =>
+              onChange={(e : any) =>
                 setFormData({ ...formData, examTag: e.target.value })
               }
               placeholder=" امتحان حدد"
@@ -268,9 +244,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
             <Textarea
               id="explanation"
               value={formData.explanation}
-              onChange={(e) =>
-                setFormData({ ...formData, explanation: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, explanation: e.target.value })}
               placeholder="أدخل تعليل الجواب الصحيح..."
               rows={3}
             />
@@ -280,9 +254,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
             <Checkbox
               id="isActive"
               checked={formData.isActive}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, isActive: checked as boolean })
-              }
+              onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked as boolean })}
             />
             <Label htmlFor="isActive">السؤال نشط</Label>
           </div>
@@ -295,9 +267,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
           <div className="flex justify-between items-center">
             <div>
               <CardTitle>خيارات الإجابة</CardTitle>
-              <CardDescription>
-                أدخل خيارات الإجابة وحدد الصحيح منها
-              </CardDescription>
+              <CardDescription>أدخل خيارات الإجابة وحدد الصحيح منها</CardDescription>
             </div>
             <Button type="button" variant="outline" onClick={addAnswer}>
               <Plus className="ml-2 h-4 w-4" />
@@ -307,25 +277,18 @@ export default function QuestionForm({ question }: QuestionFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {answers.map((answer, index) => (
-            <div
-              key={index}
-              className="flex items-center space-x-4 space-x-reverse p-4 border rounded-lg"
-            >
+            <div key={index} className="flex items-center space-x-4 space-x-reverse p-4 border rounded-lg">
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Checkbox
                   checked={answer.isCorrect}
-                  onCheckedChange={(checked) =>
-                    handleAnswerChange(index, "isCorrect", checked as boolean)
-                  }
+                  onCheckedChange={(checked) => handleAnswerChange(index, "isCorrect", checked as boolean)}
                 />
                 <Label className="text-sm font-medium">صحيح</Label>
               </div>
 
               <Input
                 value={answer.text}
-                onChange={(e) =>
-                  handleAnswerChange(index, "text", e.target.value)
-                }
+                onChange={(e) => handleAnswerChange(index, "text", e.target.value)}
                 placeholder={`الخيار ${index + 1}`}
                 className="flex-1"
               />
@@ -348,11 +311,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
 
       {/* Actions */}
       <div className="flex justify-between">
-        <Link
-          href={
-            question ? `/admin/questions/${question.id}` : "/admin/questions"
-          }
-        >
+        <Link href={question ? `/admin/questions/${question.id}` : "/admin/questions"}>
           <Button type="button" variant="outline">
             <ArrowLeft className="ml-2 h-4 w-4" />
             إلغاء
@@ -361,13 +320,9 @@ export default function QuestionForm({ question }: QuestionFormProps) {
 
         <Button type="submit" disabled={isLoading}>
           <Save className="ml-2 h-4 w-4" />
-          {isLoading
-            ? "جاري الحفظ..."
-            : question
-            ? "تحديث السؤال"
-            : "إنشاء السؤال"}
+          {isLoading ? "جاري الحفظ..." : question ? "تحديث السؤال" : "إنشاء السؤال"}
         </Button>
       </div>
     </form>
-  );
+  )
 }
