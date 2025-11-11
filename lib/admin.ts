@@ -1,6 +1,4 @@
 import { prisma } from "./prisma"
-import type { Category, Difficulty } from "@prisma/client"
-
 export async function getAllQuestions(limit?: number, offset?: number) {
   return await prisma.question.findMany({
     include: {
@@ -29,8 +27,6 @@ export async function getQuestionById(id: string) {
 
 export async function searchQuestions(
   query: string,
-  category?: Category,
-  difficulty?: Difficulty,
   examTag?: string,
   isActive?: boolean,
 ) {
@@ -43,8 +39,7 @@ export async function searchQuestions(
     }
   }
 
-  if (category) whereClause.category = category
-  if (difficulty) whereClause.difficulty = difficulty
+ 
   if (examTag) whereClause.examTag = examTag
   if (isActive !== undefined) whereClause.isActive = isActive
 
@@ -62,8 +57,6 @@ export async function searchQuestions(
 export async function createQuestion(data: {
   text: string
   explanation?: string
-  category: Category
-  difficulty: Difficulty
   examTag?: string
   isActive?: boolean
   answers: Array<{
@@ -75,8 +68,6 @@ export async function createQuestion(data: {
     data: {
       text: data.text,
       explanation: data.explanation,
-      category: data.category,
-      difficulty: data.difficulty,
       examTag: data.examTag,
       isActive: data.isActive ?? true,
       answers: {
@@ -94,8 +85,6 @@ export async function updateQuestion(
   data: {
     text?: string
     explanation?: string
-    category?: Category
-    difficulty?: Difficulty
     examTag?: string
     isActive?: boolean
     answers?: Array<{

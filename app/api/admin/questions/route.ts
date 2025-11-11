@@ -1,14 +1,13 @@
 import { createQuestion } from "@/lib/admin"
 import { NextResponse } from "next/server"
-import type { Category, Difficulty } from "@prisma/client"
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { text, explanation, category, difficulty, examTag, isActive, answers } = body
+    const { text, explanation , examTag, isActive, answers } = body
 
     // Validation
-    if (!text || !category || !difficulty || !answers || answers.length < 2) {
+    if (!text  || !answers || answers.length < 2) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
@@ -22,8 +21,6 @@ export async function POST(request: Request) {
     const question = await createQuestion({
       text,
       explanation: explanation || undefined,
-      category: category as Category,
-      difficulty: difficulty as Difficulty,
       examTag: examTag || undefined,
       isActive: isActive ?? true,
       answers: validAnswers,
