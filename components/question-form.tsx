@@ -14,7 +14,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Trash2, Save, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import type { Category, Difficulty } from "@prisma/client"
 
 interface Answer {
   id?: string
@@ -26,8 +25,6 @@ interface Question {
   id: string
   text: string
   explanation?: string
-  category: Category
-  difficulty: Difficulty
   examTag?: string
   isActive: boolean
   answers: Answer[]
@@ -44,8 +41,6 @@ export default function QuestionForm({ question }: QuestionFormProps) {
   const [formData, setFormData] = useState({
     text: question?.text || "",
     explanation: question?.explanation || "",
-    category: question?.category || ("" as Category),
-    difficulty: question?.difficulty || ("" as Difficulty),
     examTag: question?.examTag || "",
     isActive: question?.isActive ?? true,
   })
@@ -59,24 +54,9 @@ export default function QuestionForm({ question }: QuestionFormProps) {
     ],
   )
 
-  const categories = [
-    { value: "GENERAL", label: "عام" },
-    { value: "FAMILY", label: "أسرة" },
-    { value: "CIVIL", label: "مدني" },
-    { value: "CRIMINAL", label: "جنائي" },
-    { value: "COMMERCIAL", label: "تجاري" },
-    { value: "ADMINISTRATIVE", label: "إداري" },
-    { value: "LABOR", label: "شغل" },
-    { value: "CONSTITUTIONAL", label: "دستوري" },
-    { value: "PROCEDURE", label: "مسطرة" },
-  ]
+ 
 
-  const difficulties = [
-    { value: "EASY", label: "سهل", color: "bg-green-100 text-green-800" },
-    { value: "MEDIUM", label: "متوسط", color: "bg-yellow-100 text-yellow-800" },
-    { value: "HARD", label: "صعب", color: "bg-red-100 text-red-800" },
-  ]
-
+ 
 
   const handleAnswerChange = (index: number, field: keyof Answer, value: string | boolean) => {
     const newAnswers = [...answers]
@@ -105,15 +85,9 @@ export default function QuestionForm({ question }: QuestionFormProps) {
         return
       }
 
-      if (!formData.category) {
-        alert("يرجى اختيار التصنيف")
-        return
-      }
+      
 
-      if (!formData.difficulty) {
-        alert("يرجى اختيار مستوى الصعوبة")
-        return
-      }
+     
 
       const validAnswers = answers.filter((a) => a.text.trim())
       if (validAnswers.length < 2) {
@@ -178,45 +152,7 @@ export default function QuestionForm({ question }: QuestionFormProps) {
             />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">التصنيف *</Label>
-              <Select
-                value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value as Category })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر التصنيف" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="difficulty">مستوى الصعوبة *</Label>
-              <Select
-                value={formData.difficulty}
-                onValueChange={(value) => setFormData({ ...formData, difficulty: value as Difficulty })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="اختر مستوى الصعوبة" />
-                </SelectTrigger>
-                <SelectContent>
-                  {difficulties.map((diff) => (
-                    <SelectItem key={diff.value} value={diff.value}>
-                      <Badge className={diff.color}>{diff.label}</Badge>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+         
 
           <div className="space-y-2">
             <Label htmlFor="examTag">امتحان محدد (اختياري)</Label>
