@@ -54,10 +54,6 @@ export default function QuestionForm({ question }: QuestionFormProps) {
     ],
   )
 
- 
-
- 
-
   const handleAnswerChange = (index: number, field: keyof Answer, value: string | boolean) => {
     const newAnswers = [...answers]
     newAnswers[index] = { ...newAnswers[index], [field]: value }
@@ -84,10 +80,6 @@ export default function QuestionForm({ question }: QuestionFormProps) {
         alert("يرجى إدخال نص السؤال")
         return
       }
-
-      
-
-     
 
       const validAnswers = answers.filter((a) => a.text.trim())
       if (validAnswers.length < 2) {
@@ -152,26 +144,15 @@ export default function QuestionForm({ question }: QuestionFormProps) {
             />
           </div>
 
-         
-
           <div className="space-y-2">
             <Label htmlFor="examTag">امتحان محدد (اختياري)</Label>
-
-            <Select
-              value={formData.examTag}
-              onValueChange={(value) =>
-                setFormData({ ...formData, examTag: value })
-              }
-            />
-
             <Input
               id="examTag"
               value={formData.examTag}
-              onChange={(e : any) =>
+              onChange={(e) =>
                 setFormData({ ...formData, examTag: e.target.value })
               }
-              placeholder=" امتحان حدد"
-              required
+              placeholder="حدد امتحان"
             />
           </div>
 
