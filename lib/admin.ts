@@ -94,21 +94,23 @@ export async function updateQuestion(
     }>
   },
 ) {
-  // If answers are provided, we need to handle them separately
   if (data.answers) {
     // Delete existing answers
     await prisma.answer.deleteMany({
       where: { questionId: id },
     })
 
-    // Create new answers
+    // Create new answers - only include text and isCorrect
     const { answers, ...questionData } = data
     return await prisma.question.update({
       where: { id },
       data: {
         ...questionData,
         answers: {
-          create: answers,
+          create: answers.map(({ text, isCorrect }) => ({
+            text,
+            isCorrect,
+          })),
         },
       },
       include: {

@@ -1,8 +1,13 @@
 import { getQuestionById, updateQuestion, deleteQuestion } from "@/lib/admin"
 import { NextResponse } from "next/server"
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+
+export async function GET(
+  request: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const question = await getQuestionById(params.id)
+    const { id } = await params
+    const question = await getQuestionById(id)
 
     if (!question) {
       return NextResponse.json({ error: "Question not found" }, { status: 404 })
@@ -15,8 +20,12 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params
     const body = await request.json()
     const { text, explanation, examTag, isActive, answers } = body
 
@@ -32,7 +41,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: "At least one correct answer is required" }, { status: 400 })
     }
 
-    const question = await updateQuestion(params.id, {
+    const question = await updateQuestion(id, {
       text,
       explanation: explanation || undefined,
       examTag: examTag || undefined,
@@ -47,9 +56,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: Request, 
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    await deleteQuestion(params.id)
+    const { id } = await params
+    await deleteQuestion(id)
     return NextResponse.json({ message: "Question deleted successfully" })
   } catch (error) {
     console.error("Error deleting question:", error)
