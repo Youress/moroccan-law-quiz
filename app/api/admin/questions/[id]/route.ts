@@ -18,7 +18,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const body = await request.json()
-    const { text, explanation examTag, isActive, answers } = body
+    const { text, explanation, examTag, isActive, answers } = body
 
     // Validation
     if (!text || !answers || answers.length < 2) {
